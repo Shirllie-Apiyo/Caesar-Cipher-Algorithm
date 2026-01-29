@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher - Configurable Shift</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #00b4db, #0083b0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            color: #e6e6e6;
+        }
+
+        .algorithm-steps {
+            background: rgba(0, 131, 176, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+            text-align: left;
+        }
+
+        .algorithm-steps h3 {
+            color: #00b4db;
+            margin-bottom: 10px;
+        }
+
+        .algorithm-steps ol {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .algorithm-steps li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: #00b4db;
+        }
+
+        .card h2 i {
+            font-size: 1.5rem;
+        }
+
+        .shift-control {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .shift-control label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #00b4db;
+        }
+
+        .shift-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .shift-slider {
+            flex-grow: 1;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #00b4db;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .shift-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(0, 180, 219, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e6e6e6;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.07);
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00b4db;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .encrypt-btn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+        }
+
+        .encrypt-btn:hover {
+            background: linear-gradient(to right, #388E3C, #1B5E20);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .decrypt-btn {
+            background: linear-gradient(to right, #2196F3, #0D47A1);
+            color: white;
+        }
+
+        .decrypt-btn:hover {
+            background: linear-gradient(to right, #1976D2, #0D47A1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .clear-btn {
+            background: linear-gradient(to right, #FF9800, #E65100);
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: linear-gradient(to right, #F57C00, #BF360C);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .alphabet-visualization {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .alphabet-visualization h3 {
+            color: #00b4db;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .alphabet-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .alphabet-letter {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .original-alphabet .alphabet-letter {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+        }
+
+        .shifted-alphabet .alphabet-letter {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+        }
+
+        .alphabet-label {
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            min-height: 60px;
+            word-wrap: break-word;
+        }
+
+        .result-container h3 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        #encryptionResult, #decryptionResult {
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .api-info {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .api-info h2 {
+            color: #00b4db;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .api-example {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+
+        .code {
+            color: #4CAF50;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #00b4db;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .alert-error {
+            background-color: rgba(244, 67, 54, 0.2);
+            border-left: 4px solid #F44336;
+        }
+
+        .alphabet-arrow {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 5px 0;
+            color: #00b4db;
+        }
+
+        .procedure {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .procedure h3 {
+            color: #00b4db;
+            margin-bottom: 10px;
+        }
+
+        .procedure ol {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .procedure li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-lock"></i> Caesar Cipher Algorithm</h1>
+            <p class="subtitle">Encrypt and decrypt text using the Caesar cipher with a configurable shift value (1-25)</p>
+
+            <div class="algorithm-steps">
+                <h3><i class="fas fa-list-ol"></i> Algorithm Steps</h3>
+                <ol>
+                    <li>Choose a shift value between 1 and 25</li>
+                    <li>Write down the alphabet in order from A to Z</li>
+                    <li>Create a new alphabet by shifting each letter by the shift value</li>
+                    <li>Replace each letter of the message with the corresponding letter from the new alphabet</li>
+                    <li>To decrypt, shift each letter back by the same amount</li>
+                </ol>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Encryption Card -->
+            <div class="card">
+                <h2><i class="fas fa-lock"></i> Encryption</h2>
+                <div class="alert" id="encryptAlert"></div>
+
+                <div class="shift-control">
+                    <label for="encryptShift"><i class="fas fa-sliders-h"></i> Shift Value (1-25):</label>
+                    <div class="shift-input-group">
+                        <div class="shift-slider">
+                            <input type="range" id="encryptShift" min="1" max="25" value="{{ shift }}" class="shift-slider">
+                        </div>
+                        <div class="shift-value" id="encryptShiftValue">{{ shift }}</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="plainText"><i class="fas fa-keyboard"></i> Enter text to encrypt:</label>
+                    <textarea id="plainText" placeholder="Type your secret message here...">Hello, World! This is a Caesar Cipher demonstration.</textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="encrypt-btn" id="encryptBtn">
+                        <i class="fas fa-lock"></i> Encrypt Text
+                    </button>
+                    <button class="clear-btn" id="clearEncryptBtn">
+                        <i class="fas fa-trash-alt"></i> Clear
+                    </button>
+                </div>
+
+                <div class="loading" id="encryptLoading">
+                    <div class="spinner"></div>
+                    <p>Encrypting...</p>
+                </div>
+
+                <div class="alphabet-visualization" id="encryptAlphabetViz">
+                    <h3>Alphabet Shift Visualization</h3>
+                    <div class="alphabet-label">Original Alphabet:</div>
+                    <div class="alphabet-container original-alphabet" id="encryptOriginalAlphabet"></div>
+                    <div class="alphabet-arrow">↓</div>
+                    <div class="alphabet-label">Shifted Alphabet:</div>
+                    <div class="alphabet-container shifted-alphabet" id="encryptShiftedAlphabet"></div>
+                </div>
+
+                <div class="result-container">
+                    <h3>Encrypted Result:</h3>
+                    <div id="encryptionResult">Your encrypted text will appear here...</div>
+                </div>
+
+                <div class="procedure">
+                    <h3><i class="fas fa-cogs"></i> Encryption Procedure</h3>
+                    <ol>
+                        <li>Traverse the given text one character at a time</li>
+                        <li>For each alphabetic character, shift it forward by the chosen value</li>
+                        <li>Wrap around the alphabet if needed (Z → A when shifting forward)</li>
+                        <li>Non-alphabetic characters remain unchanged</li>
+                        <li>Return the new encrypted string</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Decryption Card -->
+            <div class="card">
+                <h2><i class="fas fa-lock-open"></i> Decryption</h2>
+                <div class="alert" id="decryptAlert"></div>
+
+                <div class="shift-control">
+                    <label for="decryptShift"><i class="fas fa-sliders-h"></i> Shift Value (1-25):</label>
+                    <div class="shift-input-group">
+                        <div class="shift-slider">
+                            <input type="range" id="decryptShift" min="1" max="25" value="{{ shift }}" class="shift-slider">
+                        </div>
+                        <div class="shift-value" id="decryptShiftValue">{{ shift }}</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="cipherText"><i class="fas fa-keyboard"></i> Enter text to decrypt:</label>
+                    <textarea id="cipherText" placeholder="Paste encrypted text here...">Mjqqt, Btwqi! Ymnx nx f Hfjxfw Hnumjw ijrjshnymnts.</textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="decrypt-btn" id="decryptBtn">
+                        <i class="fas fa-lock-open"></i> Decrypt Text
+                    </button>
+                    <button class="clear-btn" id="clearDecryptBtn">
+                        <i class="fas fa-trash-alt"></i> Clear
+                    </button>
+                </div>
+
+                <div class="loading" id="decryptLoading">
+                    <div class="spinner"></div>
+                    <p>Decrypting...</p>
+                </div>
+
+                <div class="alphabet-visualization" id="decryptAlphabetViz">
+                    <h3>Alphabet Shift Visualization</h3>
+                    <div class="alphabet-label">Shifted Alphabet:</div>
+                    <div class="alphabet-container shifted-alphabet" id="decryptShiftedAlphabet"></div>
+                    <div class="alphabet-arrow">↓</div>
+                    <div class="alphabet-label">Original Alphabet:</div>
+                    <div class="alphabet-container original-alphabet" id="decryptOriginalAlphabet"></div>
+                </div>
+
+                <div class="result-container">
+                    <h3>Decrypted Result:</h3>
+                    <div id="decryptionResult">Your decrypted text will appear here...</div>
+                </div>
+
+                <div class="procedure">
+                    <h3><i class="fas fa-cogs"></i> Decryption Procedure</h3>
+                    <ol>
+                        <li>Traverse the encrypted text one character at a time</li>
+                        <li>For each alphabetic character, shift it backward by the same value used for encryption</li>
+                        <li>Wrap around the alphabet if needed (A → Z when shifting backward)</li>
+                        <li>Non-alphabetic characters remain unchanged</li>
+                        <li>Return the original decrypted string</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Information -->
+        <div class="api-info">
+            <h2><i class="fas fa-code"></i> API Endpoints</h2>
+            <p>You can also use these API endpoints to encrypt and decrypt text programmatically:</p>
+
+            <div class="api-example">
+                <p><strong>Encryption API (GET):</strong></p>
+                <p class="code">/api/encrypt?text=Your text here&shift=5</p>
+
+                <p style="margin-top: 15px;"><strong>Decryption API (GET):</strong></p>
+                <p class="code">/api/decrypt?text=Your encrypted text here&shift=5</p>
+
+                <p style="margin-top: 15px;"><strong>Example:</strong></p>
+                <p class="code">http://localhost:5000/api/encrypt?text=Hello World&shift=5</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Caesar Cipher Algorithm Implementation | Shift Value: 1-25 | Made with <i class="fas fa-heart" style="color: #ff5e62;"></i></p>
+            <p>All non-alphabetic characters remain unchanged during encryption/decryption.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize alphabet visualization from server data
+        const originalAlphabet = {{ original_alphabet | tojson }};
+        const shiftedAlphabet = {{ shifted_alphabet | tojson }};
+
+        // Function to render alphabet visualization
+        function renderAlphabet(originalAlphabet, shiftedAlphabet, containerIdOriginal, containerIdShifted) {
+            const originalContainer = document.getElementById(containerIdOriginal);
+            const shiftedContainer = document.getElementById(containerIdShifted);
+
+            originalContainer.innerHTML = '';
+            shiftedContainer.innerHTML = '';
+
+            originalAlphabet.forEach(letter => {
+                const letterDiv = document.createElement('div');
+                letterDiv.className = 'alphabet-letter';
+                letterDiv.textContent = letter;
+                originalContainer.appendChild(letterDiv);
+            });
+
+            shiftedAlphabet.forEach(letter => {
+                const letterDiv = document.createElement('div');
+                letterDiv.className = 'alphabet-letter';
+                letterDiv.textContent = letter;
+                shiftedContainer.appendChild(letterDiv);
+            });
+        }
+
+        // Initialize with default shift value
+        if (originalAlphabet.length > 0 && shiftedAlphabet.length > 0) {
+            renderAlphabet(originalAlphabet, shiftedAlphabet, 'encryptOriginalAlphabet', 'encryptShiftedAlphabet');
+            renderAlphabet(originalAlphabet, shiftedAlphabet, 'decryptShiftedAlphabet', 'decryptOriginalAlphabet');
+            document.getElementById('encryptAlphabetViz').style.display = 'block';
+            document.getElementById('decryptAlphabetViz').style.display = 'block';
+        }
+
+        // Update shift value display
+        function updateShiftValue(sliderId, displayId) {
+            const slider = document.getElementById(sliderId);
+            const display = document.getElementById(displayId);
+            display.textContent = slider.value;
+
+            // Sync both sliders
+            if (sliderId === 'encryptShift') {
+                document.getElementById('decryptShift').value = slider.value;
+                document.getElementById('decryptShiftValue').textContent = slider.value;
+            } else {
+                document.getElementById('encryptShift').value = slider.value;
+                document.getElementById('encryptShiftValue').textContent = slider.value;
+            }
+        }
+
+        // Initialize sliders
+        document.getElementById('encryptShift').addEventListener('input', function() {
+            updateShiftValue('encryptShift', 'encryptShiftValue');
+        });
+
+        document.getElementById('decryptShift').addEventListener('input', function() {
+            updateShiftValue('decryptShift', 'decryptShiftValue');
+        });
+
+        // Show alert message
+        function showAlert(containerId, message, type) {
+            const alertDiv = document.getElementById(containerId);
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Encrypt button handler
+        document.getElementById('encryptBtn').addEventListener('click', async function() {
+            const plainText = document.getElementById('plainText').value.trim();
+            const shift = parseInt(document.getElementById('encryptShift').value);
+            const loading = document.getElementById('encryptLoading');
+            const resultDiv = document.getElementById('encryptionResult');
+            const alphabetViz = document.getElementById('encryptAlphabetViz');
+
+            if (!plainText) {
+                showAlert('encryptAlert', 'Please enter some text to encrypt.', 'error');
+                return;
+            }
+
+            if (shift < 1 || shift > 25) {
+                showAlert('encryptAlert', 'Shift value must be between 1 and 25.', 'error');
+                return;
+            }
+
+            // Show loading spinner
+            loading.style.display = 'block';
+            resultDiv.textContent = 'Encrypting...';
+
+            try {
+                const response = await fetch('/encrypt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: plainText,
+                        shift: shift
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>${data.encrypted_text}</strong>`;
+
+                    // Render alphabet visualization
+                    if (data.original_alphabet && data.shifted_alphabet) {
+                        renderAlphabet(data.original_alphabet, data.shifted_alphabet,
+                                      'encryptOriginalAlphabet', 'encryptShiftedAlphabet');
+                        alphabetViz.style.display = 'block';
+                    }
+
+                    // Auto-fill the decryption textarea with the encrypted result
+                    document.getElementById('cipherText').value = data.encrypted_text;
+                    document.getElementById('decryptShift').value = data.shift;
+                    document.getElementById('decryptShiftValue').textContent = data.shift;
+
+                    showAlert('encryptAlert', `Text encrypted successfully with shift ${data.shift}!`, 'success');
+                } else {
+                    resultDiv.textContent = 'Error occurred during encryption.';
+                    showAlert('encryptAlert', `Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.textContent = 'Error occurred during encryption.';
+                showAlert('encryptAlert', `Network error: ${error.message}`, 'error');
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        // Decrypt button handler
+        document.getElementById('decryptBtn').addEventListener('click', async function() {
+            const cipherText = document.getElementById('cipherText').value.trim();
+            const shift = parseInt(document.getElementById('decryptShift').value);
+            const loading = document.getElementById('decryptLoading');
+            const resultDiv = document.getElementById('decryptionResult');
+            const alphabetViz = document.getElementById('decryptAlphabetViz');
+
+            if (!cipherText) {
+                showAlert('decryptAlert', 'Please enter some text to decrypt.', 'error');
+                return;
+            }
+
+            if (shift < 1 || shift > 25) {
+                showAlert('decryptAlert', 'Shift value must be between 1 and 25.', 'error');
+                return;
+            }
+
+            // Show loading spinner
+            loading.style.display = 'block';
+            resultDiv.textContent = 'Decrypting...';
+
+            try {
+                const response = await fetch('/decrypt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: cipherText,
+                        shift: shift
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<strong>${data.decrypted_text}</strong>`;
+
+                    // Render alphabet visualization
+                    if (data.original_alphabet && data.shifted_alphabet) {
+                        renderAlphabet(data.original_alphabet, data.shifted_alphabet,
+                                      'decryptShiftedAlphabet', 'decryptOriginalAlphabet');
+                        alphabetViz.style.display = 'block';
+                    }
+
+                    // Update encryption shift to match
+                    document.getElementById('encryptShift').value = data.shift;
+                    document.getElementById('encryptShiftValue').textContent = data.shift;
+
+                    showAlert('decryptAlert', `Text decrypted successfully with shift ${data.shift}!`, 'success');
+                } else {
+                    resultDiv.textContent = 'Error occurred during decryption.';
+                    showAlert('decryptAlert', `Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.textContent = 'Error occurred during decryption.';
+                showAlert('decryptAlert', `Network error: ${error.message}`, 'error');
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        // Clear buttons
+        document.getElementById('clearEncryptBtn').addEventListener('click', function() {
+            document.getElementById('plainText').value = '';
+            document.getElementById('encryptionResult').textContent = 'Your encrypted text will appear here...';
+        });
+
+        document.getElementById('clearDecryptBtn').addEventListener('click', function() {
+            document.getElementById('cipherText').value = '';
+            document.getElementById('decryptionResult').textContent = 'Your decrypted text will appear here...';
+        });
+    </script>
+</body>
+</html>
